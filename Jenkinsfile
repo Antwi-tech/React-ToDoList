@@ -11,7 +11,7 @@ pipeline {
  
         stage('Checkout') {
             steps {
-                git branch: 'peter-branch',
+                git branch: 'main',
                     url: 'https://github.com/Antwi-tech/React-ToDoList.git'
             }
         }
