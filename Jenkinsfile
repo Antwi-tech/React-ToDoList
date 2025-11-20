@@ -7,7 +7,7 @@ pipeline {
          }
       }
 
-    environmnet {
+    environment {
         DOCKER_USERNAME=credentials('DOCKER_CREDENTIALS')
         DOCKER_PASSWORD=credentials('DOCKER_PASSWORD')
         EC2_HOST=credentials('EC2_HOST')
