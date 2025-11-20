@@ -27,7 +27,7 @@ pipeline {
  
         stage('Build an image and push') {
             steps {
-                cd scripts/
+                sh 'cd scripts/'
                 sh 'chmod 777 buildscript.sh'
                 sh './buildscript.sh'
             }
