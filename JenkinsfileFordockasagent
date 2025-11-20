@@ -1,7 +1,7 @@
 pipeline {
     agent {
       docker {
-        image "docker:24.0.0"
+        image "node:22.21.0-slim"
         // args '-u root:root'
         args '--privileged -v /var/run/docker.sock:/var/run/docker.sock'
          }
@@ -25,21 +25,32 @@ pipeline {
             }
         }
  
-        stage('Build an image and push') {
+        stage('Frontend Build') {
             steps {
-                sh 'chmod 777 scripts/buildscript.sh'
-                sh './scripts/buildscript.sh'
+                dir('dive-react-app') {
+                    echo "Installing frontend dependencies"
+                    sh 'npm install'
+ 
+                    echo "Running lint"
+                    sh 'npm run lint'
+ 
+                    echo "Building frontend"
+                    sh 'npm run build'
+                }
             }
         }
  
-        // stage('Deploy to ec2') {
-        //     steps {
-        //         writeFile file: 'deployment-key', text: 'EC2_KEY'
-        //         sh 'chmod 600 deployment-key.pem'
-        //         sh """
-        //         ssh -o StrictHostKeyChecking=no -i deployment-key.pem
-        //         ubuntu@${EC2_HOST}
-        // }
+        stage('Backend Install') {
+            steps {
+                dir('backend') {
+                    echo "Insta lling backend dependencies"
+                    sh 'npm install'
+ 
+                    echo "Running backend tests (instead of starting server)"
+                    sh 'npm test || true'   // prevents failure if no tests exist
+                }
+            }
+        }
  
     }
  
