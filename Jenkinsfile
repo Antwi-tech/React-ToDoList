@@ -27,11 +27,11 @@ pipeline {
         }
         stage("Deploy to ec2"){
             steps{
-                writeFile file: 'deployment_key.pem', text: 'EC2_KEY'
-                sh 'chmod 600 deployment_key.pem'
+                writeFile file: 'wtf-keypair.pem', text: 'EC2_KEY'
+                sh 'chmod 600 wtf-keypair.pem'
                 sh """
                 ssh -o StrictHostKeyChecking=no -i 
-                deployment_key.pem ubuntu@${EC2_HOST}'
+                wtf-keypair.pem ubuntu@${EC2_HOST}'
                 export DOCKER_USERNAME=${DOCKER_USERNAME}
                 bash React-ToDoList/deploy.sh
                 """
