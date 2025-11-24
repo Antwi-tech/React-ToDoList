@@ -16,8 +16,8 @@ pipeline {
             steps{
                 sh 'chmod 777 buildscript.sh'
                 sh './buildscript.sh'
-                sh 'docker build -t $DOCKER_USERNAME/ci_backend_full_pipeline:v1 ./backend/Dockerfile'
-                sh "docker build -t $DOCKER_USERNAME/ci_frontend_full_pipeline:v1 ./dive-react-app/Dockerfile"
+                sh 'docker build -t $DOCKER_USERNAME/ci_backend_full_pipeline:v1 -f ./backend/Dockerfile ./backend'
+                sh "docker build -t $DOCKER_USERNAME/ci_frontend_full_pipeline:v1 -f ./dive-react-app/Dockerfile ./dive-react-app"
                 sh 'docker push $DOCKER_USERNAME/ci_backend_full_pipeline:v1'
                 sh 'docker push $DOCKER_USERNAME/ci_frontend_full_pipeline:v1'
             }
