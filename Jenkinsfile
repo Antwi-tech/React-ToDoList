@@ -1,44 +1,92 @@
 pipeline {
     agent any
-    environment{
-        DOCKER_USERNAME=credentials('DOCKER_USERNAME')
-        DOCKER_PASSWORD=credentials("DOCKER_PASSWORD")
-        EC2_HOST=credentials("EC2_HOST")
-        EC2_KEY=credentials("EC2_KEY")
+
+    environment {
+        DOCKER_USERNAME = credentials('DOCKER_USERNAME')
+        DOCKER_PASSWORD = credentials('DOCKER_PASSWORD')
+        EC2_HOST       = credentials('EC2_HOST')
+        EC2_KEY        = credentials('EC2_KEY')
     }
-    stages{
-        stage("checkout code"){
-            steps{
+
+    stages {
+
+        stage("Checkout code") {
+            steps {
                 git branch: 'peter-branch', url: 'https://github.com/bigcephas1/React-ToDoList.git'
             }
         }
 
- 
-        stage('Build image and push'){
-            steps{
-                // sh 'chmod 777 buildscript.sh'
-                // sh './buildscript.sh'
-                sh 'docker build -t $DOCKER_USERNAME/ci_backend_full_pipeline:v1 -f backend/Dockerfile backend'
-                sh 'docker build -t $DOCKER_USERNAME/ci_frontend_full_pipeline:v1 -f dive-react-app/Dockerfile dive-react-app'
-                sh 'docker push $DOCKER_USERNAME/ci_backend_full_pipeline:v1'
-                sh 'docker push $DOCKER_USERNAME/ci_frontend_full_pipeline:v1'
- 
+        stage('Build image and push') {
+            steps {
+                sh """
+                    docker build -t ${DOCKER_USERNAME}/ci_backend_full_pipeline:v1 -f backend/Dockerfile backend
+                    docker build -t ${DOCKER_USERNAME}/ci_frontend_full_pipeline:v1 -f dive-react-app/Dockerfile dive-react-app
+                    docker push ${DOCKER_USERNAME}/ci_backend_full_pipeline:v1
+                    docker push ${DOCKER_USERNAME}/ci_frontend_full_pipeline:v1
+                """
             }
         }
-        stage("Deploy to ec2"){
-            steps{
-                writeFile file: 'wtf-keypair.pem', text: 'EC2_KEY'
+
+        stage("Deploy to EC2") {
+            steps {
+                // Write the private key securely to a temp file
+                writeFile file: 'wtf-keypair.pem', text: "${EC2_KEY}"
                 sh 'chmod 600 wtf-keypair.pem'
+
+                // SSH and deploy
                 sh """
-                ssh -o StrictHostKeyChecking=no -i 
-                wtf-keypair.pem ubuntu@${EC2_HOST}'
-                export DOCKER_USERNAME=${DOCKER_USERNAME}
-                bash React-ToDoList/deploy.sh
+                    ssh -o StrictHostKeyChecking=no -i wtf-keypair.pem ubuntu@${EC2_HOST} << 'ENDSSH'
+                        export DOCKER_USERNAME=${DOCKER_USERNAME}
+                        bash React-ToDoList/deploy.sh
+ENDSSH
                 """
             }
         }
     }
 }
+
+
+// pipeline {
+//     agent any
+//     environment{
+//         DOCKER_USERNAME=credentials('DOCKER_USERNAME')
+//         DOCKER_PASSWORD=credentials("DOCKER_PASSWORD")
+//         EC2_HOST=credentials("EC2_HOST")
+//         EC2_KEY=credentials("EC2_KEY")
+//     }
+//     stages{
+//         stage("checkout code"){
+//             steps{
+//                 git branch: 'peter-branch', url: 'https://github.com/bigcephas1/React-ToDoList.git'
+//             }
+//         }
+
+ 
+//         stage('Build image and push'){
+//             steps{
+//                 // sh 'chmod 777 buildscript.sh'
+//                 // sh './buildscript.sh'
+//                 sh 'docker build -t $DOCKER_USERNAME/ci_backend_full_pipeline:v1 -f backend/Dockerfile backend'
+//                 sh 'docker build -t $DOCKER_USERNAME/ci_frontend_full_pipeline:v1 -f dive-react-app/Dockerfile dive-react-app'
+//                 sh 'docker push $DOCKER_USERNAME/ci_backend_full_pipeline:v1'
+//                 sh 'docker push $DOCKER_USERNAME/ci_frontend_full_pipeline:v1'
+ 
+//             }
+//         }
+//         stage("Deploy to ec2"){
+//             steps{
+//                 writeFile file: 'wtf-keypair.pem', text: 'EC2_KEY'
+//                 sh 'chmod 600 wtf-keypair.pem'
+//                 sh """
+//                 ssh -o StrictHostKeyChecking=no -i 
+//                 wtf-keypair.pem ubuntu@${EC2_HOST}'
+//                 export DOCKER_USERNAME=${DOCKER_USERNAME}
+//                 bash React-ToDoList/deploy.sh
+//                 """
+//             }
+//         }
+//     }
+// }
 
 
 // pipeline {
