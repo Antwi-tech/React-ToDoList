@@ -30,8 +30,8 @@ pipeline {
                 writeFile file: 'wtf-keypair.pem', text: 'EC2_KEY'
                 sh 'chmod 600 wtf-keypair.pem'
                 sh '''
-                ssh -o StrictHostKeyChecking=no -i 
-                wtf-keypair.pem ubuntu@${EC2_HOST}'
+                ssh -i wtf-keypair.pem -o StrictHostKeyChecking=no 
+                ubuntu@${EC2_HOST}'
                 export DOCKER_USERNAME=${DOCKER_USERNAME}
                 bash React-ToDoList/deploy.sh
                 '''
