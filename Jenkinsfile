@@ -15,6 +15,7 @@ pipeline {
         stage('Build image and push'){
             steps{
                 sh 'chmod 777 buildscript.sh'
+                sh './buildscript.sh'
                 sh 'docker build -t $DOCKER_USERNAME/ci_backend_full_pipeline:v1 backend/Dockerfile'
                 sh "docker build -t $DOCKER_USERNAME/ci_frontend_full_pipeline:v1 dive-react-app/Dockerfile"
                 sh 'docker push $DOCKER_USERNAME/ci_backend_full_pipeline:v1'
