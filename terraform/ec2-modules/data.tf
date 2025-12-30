@@ -1,4 +1,4 @@
-data "aws_ami" "example" {
+data "aws_ami" "my_ami" {
   executable_users = ["self"]
   most_recent      = true
   owners = ["099720109477"]

@@ -9,15 +9,15 @@ locals {
   prefix      = "${local.project}-${local.environment}"
 }
 
-resource "aws_instance" "my_wtf_server" {
+resource "aws_instance" "my_server" {
     associate_public_ip_address = true
-    key_name = aws_key_pair.my_wtf_key.key_name
+    key_name = aws_key_pair.my_key.key_name
     instance_type = var.instance_type
-    ami = data.aws_ami.my_wtf_ami.id
+    ami = data.aws_ami.my_ami.id
     subnet_id = var.subnet_id
     region = var.region
     availability_zone = var.az
-    vpc_security_group_ids = [aws_security_group.wtf_sg.id]
+    vpc_security_group_ids = [aws_security_group.my_sg.id]
     user_data =  file("ec2-modules/script.sh")
 
     tags ={
@@ -41,13 +41,13 @@ resource "aws_instance" "my_wtf_server" {
     }
 }
 
-resource "aws_key_pair" "my_wtf_key" {
-   key_name = "my_wtf_key"
+resource "aws_key_pair" "my_key" {
+   key_name = "my_key"
    public_key = file("ec2-modules/my_key.pub")
   
 }
 
-resource "aws_security_group" "wtf_sg" {
+resource "aws_security_group" "my_sg" {
   name =" ${local.prefix}-sg"
   description = "anything"
   vpc_id = var.vpc_id
