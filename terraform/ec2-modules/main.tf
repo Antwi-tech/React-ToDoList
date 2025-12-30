@@ -3,7 +3,7 @@ locals {
   environment = terraform.workspace == "default" ? "dev" : terraform.workspace
  
   # base app/project name
-  project     = "wtf"
+  project     = "app"
  
   # standard prefix pattern for all resources
   prefix      = "${local.project}-${local.environment}"
