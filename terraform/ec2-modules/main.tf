@@ -18,28 +18,28 @@ resource "aws_instance" "my_server" {
     region = var.region
     availability_zone = var.az
     vpc_security_group_ids = [aws_security_group.my_sg.id]
-    user_data =  file("ec2-modules/script.sh")
+    # user_data =  file("ec2-modules/script.sh")
 
     tags ={
           Name= "${local.prefix}-server"
     }
 
-    provisioner "remote-exec" {
-      inline = [ 
-        "sudo apt update",
-        "sudo apt install -y nginx",
-        "sudo systemctl start nginx",
-        "echo 'hello everyone' | sudo tee /var/www/html/index.html",
-        "sudo systemctl restart nginx"
-       ]
-      connection {
-        type        = "ssh"
-        host        = self.public_ip
-        user        = "ubuntu"
-        private_key = file("ec2-modules/my_key.pub")
-      }
-    }
-}
+#     provisioner "remote-exec" {
+#       inline = [ 
+#         "sudo apt update",
+#         "sudo apt install -y nginx",
+#         "sudo systemctl start nginx",
+#         "echo 'hello everyone' | sudo tee /var/www/html/index.html",
+#         "sudo systemctl restart nginx"
+#        ]
+#       connection {
+#         type        = "ssh"
+#         host        = self.public_ip
+#         user        = "ubuntu"
+#         private_key = file("ec2-modules/my_key.pub")
+#       }
+#     }
+# }
 
 resource "aws_key_pair" "my_key" {
    key_name = "my_key"
