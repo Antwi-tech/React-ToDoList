@@ -5,7 +5,7 @@ pipeline {
  
         stage("Checkout code") {
             steps {
-                git branch: 'peter-branch', url: 'https://github.com/bigcephas1/React-ToDoList.git'
+                git branch: 'main', url: 'https://github.com/Antwi-tech/React-ToDoList.git'
             }
         }
  
@@ -25,7 +25,33 @@ pipeline {
                 }
             }
         }
- 
+        stage("Implement Terraform") {
+            
+            steps {
+                withAWS(credentials: 'AWS_CREEDS', region: 'us-east-1') {
+
+                    withCredentials([
+                        file(credentialsId: 'PUBKEY_FILE',  variable: 'PUBKEY_FILE'),
+                        file(credentialsId: 'PRIVKEY_FILE', variable: 'PRIVKEY_FILE')
+                    ]) {
+
+                        dir("terraform/modules") {
+                            sh """
+                                echo "AWS credentials loaded into environment"
+                               # Copy SSH keys for EC2 provisioning
+                                 cp "${PUBKEY_FILE}" ec2-modules/my_key.pub
+                                 cp "${PRIVKEY_FILE}" ec2-modules/my_key
+                                 chmod 600 ec2-modules/my_key
+
+                                terraform init
+                                terraform apply --auto-approve
+                                // terraform destroy --auto-approve
+                            """
+                        }
+                    }
+                }
+            }
+        }
         stage("Deploy to EC2") {
             steps {
                 withCredentials([
@@ -50,6 +76,26 @@ EOF
             }
         }
     }
+    post {
+        always {
+            cleanWs()
+        }
+        success {
+            emailext(
+                subject: "SUCCESS: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                body: "The build ${env.BUILD_URL} completed successfully.",
+                to: "nanaafuaantwiwaa624@gmail.com"
+            )
+        }
+        failure {
+            emailext(
+                subject: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                body: "The build ${env.BUILD_URL} failed. Please check the logs.",
+                to: "nanaafuaantwiwaa624@gmail.com"
+            )
+        }
+    }
+  }
 }
 
 // pipeline {
@@ -156,27 +202,3 @@ EOF
 //         }
 //     }
 // }
-
-
-// // pipeline {
-// //     agent any
-
-// //     stages {
-// //         stage('Checkout') {
-// //             steps { checkout scm }
-// //         }
-
-// //         stage('Build') {
-// //             agent {
-// //                 docker {
-// //                     image 'docker:24.0.0'
-// //                     args '--privileged -v /var/run/docker.sock:/var/run/docker.sock'
-// //                 }
-// //             }
-// //             steps {
-// //                 sh 'chmod +x scripts/buildscript.sh'
-// //                 sh './scripts/buildscript.sh'
-// //             }
-// //         }
-// //     }
-// // }
