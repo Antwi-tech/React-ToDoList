@@ -20,7 +20,7 @@ terraform {
 
 
 resource "aws_s3_bucket" "my_s3_bucket" {
-  bucket = "mybucket6720"
+  bucket = "${local.prefix}-${random_id.bucket.hex}"
 
   tags = {
     name = "${local.prefix}-bucket"
