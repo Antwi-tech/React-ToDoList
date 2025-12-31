@@ -19,8 +19,8 @@ terraform {
 }
 
 
-resource "aws_s3_bucket" "wtf_bucket" {
-  bucket = "wtfbucket19"
+resource "aws_s3_bucket" "my_s3_bucket" {
+  bucket = "mybucket6720"
 
   tags = {
     name = "${local.prefix}-bucket"
