@@ -61,7 +61,8 @@ pipeline {
             ]) {
                 dir("terraform/modules") {
                     sh '''
-                        set -euxo pipefail
+                        set -eux
+                        
                         echo "=== Terraform Init ==="
                         terraform init
 
