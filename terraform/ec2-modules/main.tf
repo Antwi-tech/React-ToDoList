@@ -25,27 +25,10 @@ resource "aws_instance" "my_server" {
     }
 
 }
-#     provisioner "remote-exec" {
-#       inline = [ 
-#         "sudo apt update",
-#         "sudo apt install -y nginx",
-#         "sudo systemctl start nginx",
-#         "echo 'hello everyone' | sudo tee /var/www/html/index.html",
-#         "sudo systemctl restart nginx"
-#        ]
-#       connection {
-#         type        = "ssh"
-#         host        = self.public_ip
-#         user        = "ubuntu"
-#         private_key = file("ec2-modules/my_key.pub")
-#       }
-#     }
-# }
 
 resource "aws_key_pair" "my_key" {
-   key_name = "my_key"
-   public_key = file("ec2-modules/my_key.pub")
-  
+  key_name   = "${local.prefix}-key"
+  public_key = file("ec2-modules/my_key.pub")
 }
 
 resource "aws_security_group" "my_sg" {
