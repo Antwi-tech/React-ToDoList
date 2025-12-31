@@ -35,7 +35,7 @@ pipeline {
                         file(credentialsId: 'PRIVKEY_FILE', variable: 'PRIVKEY_FILE')
                     ]) {
 
-                        dir("terraform/modules") {
+                        dir("terraform") {
                             sh """
                                 echo "AWS credentials loaded into environment"
                                # Copy SSH keys for EC2 provisioning
