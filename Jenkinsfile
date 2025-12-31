@@ -67,10 +67,10 @@ pipeline {
                         cp "${PRIVKEY_FILE}" ec2-modules/my_key
                         chmod 600 ec2-modules/my_key
 
-                        echo "Initialzing terraform""
+                        echo "Initialzing terraform"
                         terraform init
 
-                        echo "Terraform apply
+                        echo "Terraform apply"
                         terraform apply --auto-approve
                     '''
                 }
