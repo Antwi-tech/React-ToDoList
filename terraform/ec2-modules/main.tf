@@ -24,6 +24,7 @@ resource "aws_instance" "my_server" {
           Name= "${local.prefix}-server"
     }
 
+}
 #     provisioner "remote-exec" {
 #       inline = [ 
 #         "sudo apt update",
