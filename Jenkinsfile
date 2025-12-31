@@ -61,17 +61,18 @@ pipeline {
             ]) {
                 dir("terraform") {
                     sh '''
-                        set -eux
+                       # set -eux
                         
-                        cp "${PUBKEY_FILE}" ec2-modules/my_key.pub
-                        cp "${PRIVKEY_FILE}" ec2-modules/my_key
-                        chmod 600 ec2-modules/my_key
+                       # cp "${PUBKEY_FILE}" ec2-modules/my_key.pub
+                        # cp "${PRIVKEY_FILE}" ec2-modules/my_key
+                       # chmod 600 ec2-modules/my_key
 
-                        echo "Initialzing terraform"
-                        terraform init
+                       # echo "Initialzing terraform"
+                       # terraform init
 
-                        echo "Terraform apply"
-                        terraform apply --auto-approve
+                       # echo "Terraform apply"
+                       # terraform apply --auto-approve
+                       terraform destroy --auto-approve
                     '''
                 }
             }
@@ -79,24 +80,24 @@ pipeline {
     }
 }
 
-        stage("Connect to EC2 with ansible") {
-    steps {
-        sh '''
-        echo "[app_servers]" > terraform/ec2-modules/ansible_hosts.ini
-        echo "ec2_instance \
-        ansible_host=$(terraform -chdir=terraform modules output -raw ec2_public_ip) \
-        ansible_user=ubuntu ansible_ssh_private_key_file=ec2-modules/my_key" \
-        >> terraform/ec2-modules/ansible_hosts.ini
-        '''
+//         stage("Connect to EC2 with ansible") {
+//     steps {
+//         sh '''
+//         echo "[app_servers]" > terraform/ec2-modules/ansible_hosts.ini
+//         echo "ec2_instance \
+//         ansible_host=$(terraform -chdir=terraform modules output -raw ec2_public_ip) \
+//         ansible_user=ubuntu ansible_ssh_private_key_file=ec2-modules/my_key" \
+//         >> terraform/ec2-modules/ansible_hosts.ini
+//         '''
 
-        ansiblePlaybook(
-            credentialsId: 'EC2_KEY',
-            disableHostKeyChecking: true,
-            inventory: 'terraform/ec2-modules/ansible_hosts.ini',
-            playbook: 'ansible/deploy.yml'
-        )
-    }
-}
+//         ansiblePlaybook(
+//             credentialsId: 'EC2_KEY',
+//             disableHostKeyChecking: true,
+//             inventory: 'terraform/ec2-modules/ansible_hosts.ini',
+//             playbook: 'ansible/deploy.yml'
+//         )
+//     }
+// }
 
 //         stage("Deploy to EC2") {
 //             steps {
