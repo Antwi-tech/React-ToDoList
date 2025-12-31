@@ -39,9 +39,9 @@ pipeline {
         //                     sh """
         //                         echo "AWS credentials loaded into environment"
         //                        # Copy SSH keys for EC2 provisioning
-        //                          cp "${PUBKEY_FILE}" ec2-modules/my_key.pub
-        //                          cp "${PRIVKEY_FILE}" ec2-modules/my_key
-        //                          chmod 600 ec2-modules/my_key
+                                //  cp "${PUBKEY_FILE}" ec2-modules/my_key.pub
+                                //  cp "${PRIVKEY_FILE}" ec2-modules/my_key
+                                //  chmod 600 ec2-modules/my_key
 
         //                         terraform init
         //                         terraform apply --auto-approve
@@ -63,10 +63,14 @@ pipeline {
                     sh '''
                         set -eux
 
-                        echo "=== Terraform Init ==="
+                        echo "Initialzing terraorm""
                         terraform init
-
-                        echo "=== Terraform Apply ==="
+                        
+                        cp "${PUBKEY_FILE}" ec2-modules/my_key.pub
+                        cp "${PRIVKEY_FILE}" ec2-modules/my_key
+                        chmod 600 ec2-modules/my_key
+                        
+                        echo "Terraform apply
                         terraform apply --auto-approve
                     '''
                 }
