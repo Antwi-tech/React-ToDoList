@@ -25,32 +25,55 @@ pipeline {
                 }
             }
         }
-        stage("Implement Terraform") {
+        // stage("Implement Terraform") {
             
-            steps {
-                withAWS(credentials: 'AWS_CREEDS', region: 'us-east-1') {
+        //     steps {
+        //         withAWS(credentials: 'AWS_CREEDS', region: 'us-east-1') {
 
-                    withCredentials([
-                        file(credentialsId: 'PUBKEY_FILE',  variable: 'PUBKEY_FILE'),
-                        file(credentialsId: 'PRIVKEY_FILE', variable: 'PRIVKEY_FILE')
-                    ]) {
+        //             withCredentials([
+        //                 file(credentialsId: 'PUBKEY_FILE',  variable: 'PUBKEY_FILE'),
+        //                 file(credentialsId: 'PRIVKEY_FILE', variable: 'PRIVKEY_FILE')
+        //             ]) {
 
-                        dir("terraform/modules") {
-                            sh """
-                                echo "AWS credentials loaded into environment"
-                               # Copy SSH keys for EC2 provisioning
-                                 cp "${PUBKEY_FILE}" ec2-modules/my_key.pub
-                                 cp "${PRIVKEY_FILE}" ec2-modules/my_key
-                                 chmod 600 ec2-modules/my_key
+        //                 dir("terraform/modules") {
+        //                     sh """
+        //                         echo "AWS credentials loaded into environment"
+        //                        # Copy SSH keys for EC2 provisioning
+        //                          cp "${PUBKEY_FILE}" ec2-modules/my_key.pub
+        //                          cp "${PRIVKEY_FILE}" ec2-modules/my_key
+        //                          chmod 600 ec2-modules/my_key
 
-                                terraform init
-                                terraform apply --auto-approve
-                            """
-                        }
-                    }
+        //                         terraform init
+        //                         terraform apply --auto-approve
+        //                     """
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
+
+        stage("Implement Terraform") {
+    steps {
+        withAWS(credentials: 'AWS_CREEDS', region: 'us-east-1') {
+            withCredentials([
+                file(credentialsId: 'PUBKEY_FILE',  variable: 'PUBKEY_FILE'),
+                file(credentialsId: 'PRIVKEY_FILE', variable: 'PRIVKEY_FILE')
+            ]) {
+                dir("terraform/modules") {
+                    sh '''
+                        set -euxo pipefail
+                        echo "=== Terraform Init ==="
+                        terraform init
+
+                        echo "=== Terraform Apply ==="
+                        terraform apply --auto-approve
+                    '''
                 }
             }
         }
+    }
+}
+
         stage("Connect to EC2 with ansible") {
     steps {
         sh '''
