@@ -59,7 +59,7 @@ pipeline {
                 file(credentialsId: 'PUBKEY_FILE',  variable: 'PUBKEY_FILE'),
                 file(credentialsId: 'PRIVKEY_FILE', variable: 'PRIVKEY_FILE')
             ]) {
-                dir("terraform/modules") {
+                dir("terraform") {
                     sh '''
                         set -eux
 
