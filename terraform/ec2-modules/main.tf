@@ -28,7 +28,8 @@ resource "aws_instance" "my_server" {
 
 resource "aws_key_pair" "my_key" {
   key_name   = "${local.prefix}-key"
-  public_key = file("ec2-modules/my_key.pub")
+#  public_key = file("ec2-modules/my_key.pub")
+  public_key = file("~/.ssh/id_rsa.pub") 
 }
 
 resource "aws_security_group" "my_sg" {
