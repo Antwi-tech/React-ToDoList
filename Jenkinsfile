@@ -85,7 +85,7 @@ pipeline {
         sh '''
         echo "[app_servers]" > terraform/ec2-modules/ansible_hosts.ini
         echo "ec2_instance \
-        ansible_host=$(terraform -chdir=terraform output -raw instance_ip) \
+        ansible_host=$(terraform -chdir=terraform output -raw public_ip) \
         ansible_user=ubuntu ansible_ssh_private_key_file=ec2-modules/my_key" \
         >> terraform/ec2-modules/ansible_hosts.ini
         '''
