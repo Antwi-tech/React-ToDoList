@@ -43,7 +43,7 @@ pipeline {
                                  cp "${PRIVKEY_FILE}" ec2-modules/my_key
                                  chmod 600 ec2-modules/my_key
 
-                                 terraform init
+                                terraform init
                               #  terraform import aws_key_pair.my_key my_key
                                 terraform apply --auto-approve
                             """
@@ -80,18 +80,14 @@ pipeline {
 //     }
 // }
 
-       stage("Connect to EC2 with Ansible") {
+        stage("Connect to EC2 with ansible") {
     steps {
         sh '''
-            set -e
-
-            # Generate inventory dynamically
-            echo "[app_servers]" > terraform/ec2-modules/ansible_hosts.ini
-            echo "ec2_instance ansible_host=$(terraform -chdir=terraform output -raw public_ip) ansible_user=ubuntu" \
-              >> terraform/ec2-modules/ansible_hosts.ini
-
-            echo "Generated inventory:"
-            cat terraform/ec2-modules/ansible_hosts.ini
+        echo "[app_servers]" > terraform/ec2-modules/ansible_hosts.ini
+        echo "ec2_instance \
+        ansible_host=$(terraform -chdir=terraform output -raw public_ip) \
+        ansible_user=ubuntu ansible_ssh_private_key_file=ec2-modules/my_key" \
+        >> terraform/ec2-modules/ansible_hosts.ini
         '''
 
         ansiblePlaybook(
@@ -101,8 +97,7 @@ pipeline {
             playbook: 'ansible/deploy.yml'
         )
     }
-
-    }
+ }
 }
 
 //         stage("Deploy to EC2") {
