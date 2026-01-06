@@ -1,6 +1,6 @@
 ---
 - name: Deploy React ToDoList App
-  hosts: my_servers
+  hosts: app_servers
   become: yes
   tasks:
     - name: Update APT packages
