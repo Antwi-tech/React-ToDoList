@@ -16,17 +16,26 @@ terraform {
       version = "~> 6.0"
     }
   }
-}
-
-
-resource "aws_s3_bucket" "my_s3_bucket" {
-  bucket = "mybucket6720"
-
-  tags = {
-    name = "${local.prefix}-bucket"
+  backend "s3" {
+    bucket         = "mybucket6720"
+    key            = "terraform/state/app.tfstate"
+    region         = "us-east-1"
+    dynamodb_table = "terraform-locks" 
+    encrypt        = true
   }
 
 }
+
+
+
+# resource "aws_s3_bucket" "my_s3_bucket" {
+#   bucket = "mybucket6720"
+
+#   tags = {
+#     name = "${local.prefix}-bucket"
+#   }
+
+# }
 
 module "vpc-modules" {
   source            = "./vpc-modules"
