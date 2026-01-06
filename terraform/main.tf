@@ -20,22 +20,22 @@ terraform {
     bucket         = "mybucket6720"
     key            = "terraform/state/app.tfstate"
     region         = "us-east-1"
-    use_lockfile = true 
-    encrypt        = true
+    # use_lockfile = true 
+    # encrypt        = true
   }
 
 }
 
 
 
-resource "aws_s3_bucket" "my_s3_bucket" {
-  bucket = "mybucket6720"
+# resource "aws_s3_bucket" "my_s3_bucket" {
+#   bucket = "mybucket6720"
 
-  tags = {
-    name = "${local.prefix}-bucket"
-  }
+#   tags = {
+#     name = "${local.prefix}-bucket"
+#   }
 
-}
+# }
 
 module "vpc-modules" {
   source            = "./vpc-modules"
