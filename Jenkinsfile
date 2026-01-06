@@ -43,7 +43,7 @@ pipeline {
                                  cp "${PRIVKEY_FILE}" ec2-modules/my_key
                                  chmod 600 ec2-modules/my_key
 
-                              # terraform init
+                                 terraform init
                               #  terraform import aws_key_pair.my_key my_key
                                 terraform apply --auto-approve
                             """
