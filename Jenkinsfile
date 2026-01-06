@@ -80,14 +80,18 @@ pipeline {
 //     }
 // }
 
-        stage("Connect to EC2 with ansible") {
+       stage("Connect to EC2 with Ansible") {
     steps {
         sh '''
-        echo "[app_servers]" > terraform/ec2-modules/ansible_hosts.ini
-        echo "ec2_instance \
-        ansible_host=$(terraform -chdir=terraform output -raw public_ip) \
-        ansible_user=ubuntu ansible_ssh_private_key_file=ec2-modules/my_key" \
-        >> terraform/ec2-modules/ansible_hosts.ini
+            set -e
+
+            # Generate inventory dynamically
+            echo "[app_servers]" > terraform/ec2-modules/ansible_hosts.ini
+            echo "ec2_instance ansible_host=$(terraform -chdir=terraform output -raw public_ip) ansible_user=ubuntu" \
+              >> terraform/ec2-modules/ansible_hosts.ini
+
+            echo "Generated inventory:"
+            cat terraform/ec2-modules/ansible_hosts.ini
         '''
 
         ansiblePlaybook(
@@ -96,6 +100,8 @@ pipeline {
             inventory: 'terraform/ec2-modules/ansible_hosts.ini',
             playbook: 'ansible/deploy.yml'
         )
+    }
+
     }
 }
 
