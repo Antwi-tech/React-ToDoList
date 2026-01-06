@@ -94,7 +94,7 @@ pipeline {
             credentialsId: 'EC2_KEY',
             disableHostKeyChecking: true,
             inventory: 'terraform/ec2-modules/ansible_hosts.ini',
-            playbook: '../ansible/deploy.yml'
+            playbook: 'ansible/deploy.yml'
         )
     }
 }
