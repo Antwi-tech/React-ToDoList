@@ -77,8 +77,8 @@ pipeline {
                         inventory: 'terraform/ec2-modules/ansible_hosts.ini',
                         playbook: 'ansible/deploy.yml',
                         extraVars: [
-                            docker_username: "$DOCKER_USERNAME",
-                            docker_password: "$DOCKER_PASSWORD"
+                            DOCKER_USERNAME: "$DOCKER_USERNAME",
+                            DOCKER_PASSWORD: "$DOCKER_PASSWORD"
                         ]
                     )
                 }
