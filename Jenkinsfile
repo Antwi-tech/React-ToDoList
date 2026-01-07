@@ -65,7 +65,7 @@ pipeline {
                 '''
 
                 ansiblePlaybook(
-                    credentialsId: 'EC2_KEY',
+                    credentialsId: 'ANSIPRIV_KEY',
                     disableHostKeyChecking: true,
                     inventory: 'terraform/ec2-modules/ansible_hosts.ini',
                     playbook: 'ansible/deploy.yml'
