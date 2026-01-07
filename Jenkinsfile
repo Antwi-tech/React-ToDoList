@@ -55,21 +55,33 @@ pipeline {
 
         stage("Connect to EC2 with Ansible") {
             steps {
-                sh '''
-                    echo "[app_servers]" > terraform/ec2-modules/ansible_hosts.ini
-                    echo "ec2_instance ansible_host=$(terraform -chdir=terraform output -raw public_ip) ansible_user=ubuntu" \
-                      >> terraform/ec2-modules/ansible_hosts.ini
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'docker_creds',
+                        usernameVariable: 'DOCKER_USERNAME',
+                        passwordVariable: 'DOCKER_PASSWORD'
+                    )
+                ]) {
+                    sh '''
+                        echo "[app_servers]" > terraform/ec2-modules/ansible_hosts.ini
+                        echo "ec2_instance ansible_host=$(terraform -chdir=terraform output -raw public_ip) ansible_user=ubuntu" \
+                          >> terraform/ec2-modules/ansible_hosts.ini
 
-                    echo "Inventory:"
-                    cat terraform/ec2-modules/ansible_hosts.ini
-                '''
+                        echo "Inventory:"
+                        cat terraform/ec2-modules/ansible_hosts.ini
+                    '''
 
-                ansiblePlaybook(
-                    credentialsId: 'ANSPRIV_KEY',
-                    disableHostKeyChecking: true,
-                    inventory: 'terraform/ec2-modules/ansible_hosts.ini',
-                    playbook: 'ansible/deploy.yml'
-                )
+                    ansiblePlaybook(
+                        credentialsId: 'ANSPRIV_KEY',
+                        disableHostKeyChecking: true,
+                        inventory: 'terraform/ec2-modules/ansible_hosts.ini',
+                        playbook: 'ansible/deploy.yml',
+                        extraVars: [
+                            docker_username: "$DOCKER_USERNAME",
+                            docker_password: "$DOCKER_PASSWORD"
+                        ]
+                    )
+                }
             }
         }
     }
